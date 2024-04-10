@@ -20,8 +20,7 @@ public class ScrollScript : ScrollRect
     {
         //드래그 순간 수평이동이 크면 부모드래그, 수직이동 크면 자식드래그
         forParent = Mathf.Abs(eventData.delta.x) > Mathf.Abs(eventData.delta.y);
-        Debug.Log("x" + Mathf.Abs(eventData.delta.x));
-        Debug.Log("y" + Mathf.Abs(eventData.delta.y));
+        
         if (forParent)
         {
             NM.OnBeginDrag(eventData);

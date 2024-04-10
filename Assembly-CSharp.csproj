@@ -60,7 +60,6 @@
     <Compile Include="Assets\Scripts\UI\SetInputField.cs" />
     <Compile Include="Assets\Scripts\CSV\CSVReader.cs" />
     <Compile Include="Assets\Scripts\Map\Map.cs" />
-    <Compile Include="Assets\Scripts\UI\SwipeUI.cs" />
     <Compile Include="Assets\Scripts\Managers\NestedScrollManager.cs" />
     <Compile Include="Assets\ScrollScript.cs" />
   </ItemGroup>

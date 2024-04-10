@@ -9,11 +9,15 @@ public class NestedScrollManager : MonoBehaviour, IBeginDragHandler, IDragHandle
     public Scrollbar scrollbar;
     public Transform contentTr;
 
-    const int   SIZE = 4;
-    float[]     pos = new float[SIZE];//value 값 저장공간
-    float       distance, curPos, targetPos;//pos사이 간격
-    bool        isDrag = false;
-    int         targetIndex;
+    public Transform[] circleContents;
+
+    public Slider tabSlider;
+
+    const int SIZE = 4;
+    float[] pos = new float[SIZE];//value 값 저장공간
+    float distance, curPos, targetPos;//pos사이 간격
+    bool isDrag = false;
+    int targetIndex;
 
     void Start()
     {
@@ -21,6 +25,25 @@ public class NestedScrollManager : MonoBehaviour, IBeginDragHandler, IDragHandle
 
         for (int i = 0; i < SIZE; i++)
             pos[i] = distance * i;
+
+
+    }
+
+
+    private void UpdateCircleContents()
+    {
+        if (circleContents.Length == 0)
+            return;
+
+        for (int i = 0; i < SIZE; i++)
+        {
+            circleContents[i].GetComponent<Image>().color = Color.white;
+
+            if (scrollbar.value < pos[i] + distance * 0.5f && scrollbar.value > pos[i] - distance * 0.5f)
+            {
+                circleContents[i].GetComponent<Image>().color = Color.black;
+            }
+        }
     }
 
     float SetPos()
@@ -31,6 +54,7 @@ public class NestedScrollManager : MonoBehaviour, IBeginDragHandler, IDragHandle
                 targetIndex = i;
                 return pos[i];
             }
+
         return 0;
     }
 
@@ -64,15 +88,29 @@ public class NestedScrollManager : MonoBehaviour, IBeginDragHandler, IDragHandle
 
         //자식 오브젝트들 중에 scrollscript를 갖고있고, 옆에서 옮겨왔으면 수직스크롤을 맨 위로 올려줌
         for (int i = 0; i < SIZE; i++)
-            if (contentTr.GetChild(i).GetComponent<ScrollScript>() && curPos != pos[i] && targetPos == pos[i])
-                contentTr.GetChild(i).GetChild(1).GetComponent<Scrollbar>().value = 1;
+        {
+            if (contentTr != null)
+                if (contentTr.GetChild(i).GetComponent<ScrollScript>() && curPos != pos[i] && targetPos == pos[i])
+                    contentTr.GetChild(i).GetChild(1).GetComponent<Scrollbar>().value = 1;
 
+        }
     }
 
     void Update()
     {
+        if (circleContents != null)
+            UpdateCircleContents();
+
+        if (tabSlider != null)
+            tabSlider.value = scrollbar.value;
+
         if (!isDrag)
             scrollbar.value = Mathf.Lerp(scrollbar.value, targetPos, 0.1f);
+    }
 
+    public void TabClick(int n)
+    {
+        targetIndex = n;
+        targetPos = pos[n];
     }
 }
