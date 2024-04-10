@@ -11,9 +11,12 @@ public class SwipeUI : MonoBehaviour
     [SerializeField]
     private Transform[] bottomButton;
     [SerializeField]
+    private Transform[] circleContents;
+    [SerializeField]
     private float swipeTime = 0.2f;
     [SerializeField]
     private float swipeDistance = 10.0f;
+    private SwipePanelUsage swipePanelUsage;
 
     private float[] scrollPageValues;
     private float valueDistance = 0;
@@ -22,6 +25,14 @@ public class SwipeUI : MonoBehaviour
     private float startTouchX;
     private float endTouchX;
     private bool isSwipeMode = false;
+    private float circleContentsScale = 1.6f;
+
+
+    public enum SwipePanelUsage
+    {
+        Advertise,
+        Mainmenu,
+    }
 
     private void Awake()
     {
@@ -148,6 +159,23 @@ public class SwipeUI : MonoBehaviour
                 scrollbar.value > scrollPageValues[i] - (valueDistance / 2))
             {
                 EventSystem.current.SetSelectedGameObject(button.gameObject);
+            }
+
+        }
+    }
+
+    void UpdateCircleContent()
+    {
+        for (int i = 0; i < scrollPageValues.Length; i++)
+        {
+            circleContents[i].localScale = Vector2.one;
+            circleContents[i].GetComponent<Image>().color = Color.white;
+
+            if (scrollbar.value < scrollPageValues[i] + (valueDistance / 2) &&
+                scrollbar.value > scrollPageValues[i] - (valueDistance / 2))
+            {
+                circleContents[i].localScale = Vector2.one * circleContentsScale;
+                circleContents[i].GetComponent<Image>().color = Color.black;
             }
 
         }
