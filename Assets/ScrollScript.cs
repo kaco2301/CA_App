@@ -18,34 +18,39 @@ public class ScrollScript : ScrollRect
 
     public override void OnBeginDrag(PointerEventData eventData)
     {
-        //드래그 순간 수평이동이 크면 부모드래그, 수직이동 크면 자식드래그
         forParent = Mathf.Abs(eventData.delta.x) > Mathf.Abs(eventData.delta.y);
-        
+        //드래그 순간 수평이동이 크면 부모드래그, 수직이동 크면 자식드래그
+        Debug.Log(forParent);
         if (forParent)
         {
             NM.OnBeginDrag(eventData);
             parentScrollRect.OnBeginDrag(eventData);
         }
-        else base.OnBeginDrag(eventData);
+        else 
+            base.OnBeginDrag(eventData);
     }
 
     public override void OnDrag(PointerEventData eventData)
     {
+        Debug.Log(forParent);
         if (forParent)
         {
             NM.OnDrag(eventData);
             parentScrollRect.OnDrag(eventData);
         }
-        else base.OnDrag(eventData);
+        else 
+            base.OnDrag(eventData);
     }
 
     public override void OnEndDrag(PointerEventData eventData)
     {
+        Debug.Log(forParent);
         if (forParent)
         {
             NM.OnEndDrag(eventData);
             parentScrollRect.OnEndDrag(eventData);
         }
-        else base.OnEndDrag(eventData);
+        else 
+            base.OnEndDrag(eventData);
     }
 }
