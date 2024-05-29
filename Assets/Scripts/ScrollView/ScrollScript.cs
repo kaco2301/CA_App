@@ -16,26 +16,10 @@ public class ScrollScript : ScrollRect
         parentScrollRect = GameObject.FindWithTag("NestedScrollManager").GetComponent<ScrollRect>();
     }
 
-    public override void OnBeginDrag(PointerEventData eventData)
-    {
-        forParent = Mathf.Abs(eventData.delta.x) > Mathf.Abs(eventData.delta.y);
-        //드래그 순간 수평이동이 크면 부모드래그, 수직이동 크면 자식드래그
-        Debug.Log(forParent);
-        if (forParent)
-        {
-            NM.OnBeginDrag(eventData);
-            parentScrollRect.OnBeginDrag(eventData);
-        }
-        else 
-            base.OnBeginDrag(eventData);
-    }
-
     public override void OnDrag(PointerEventData eventData)
     {
-        Debug.Log(forParent);
         if (forParent)
         {
-            NM.OnDrag(eventData);
             parentScrollRect.OnDrag(eventData);
         }
         else 
@@ -44,10 +28,8 @@ public class ScrollScript : ScrollRect
 
     public override void OnEndDrag(PointerEventData eventData)
     {
-        Debug.Log(forParent);
         if (forParent)
         {
-            NM.OnEndDrag(eventData);
             parentScrollRect.OnEndDrag(eventData);
         }
         else 

@@ -4,65 +4,38 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class NestedScrollManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class AdScroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    public Scrollbar scrollbar;
-    public Transform contentTr;
+    public float passTime = 3.0f;
+    public Scrollbar adScrollbar;
 
     public Transform[] circleContents;
-
-    public Slider tabSlider;
 
     const int SIZE = 4;
     float[] pos = new float[SIZE];//value 값 저장공간
     float distance, curPos, targetPos;//pos사이 간격
     bool isDrag = false;
-    int targetIndex;
 
-    void Start()
+
+    private void Start()
     {
         // 거리에 따라 0~1인 pos대입
         distance = 1f / (SIZE - 1);
 
         for (int i = 0; i < SIZE; i++)
             pos[i] = distance * i;
+
+        StartCoroutine(AutoScrollCoroutine());
     }
 
-    float SetPos()
-    {
-            // 절반거리를 기준으로 가까운 위치를 반환
-            for (int i = 0; i < SIZE; i++)
-                if (scrollbar.value < pos[i] + distance * 0.5f && scrollbar.value > pos[i] - distance * 0.5f)
-                {
-                    targetIndex = i;
-                    return pos[i];
-                }
-        return 0;
-    }
-
-    void Update()
+    private void Update()
     {
         if (circleContents != null)
             UpdateCircleContents();
 
-        if (tabSlider != null)
-            tabSlider.value = scrollbar.value;
-
         if (!isDrag)
-            scrollbar.value = Mathf.Lerp(scrollbar.value, targetPos, 0.1f);
-    }
+            adScrollbar.value = Mathf.Lerp(adScrollbar.value, targetPos, 0.1f);
 
-    void VerticalScrollUp()
-    {
-        // 목표가 수직스크롤이고, 옆에서 옮겨왔다면 수직스크롤을 맨 위로 올림
-        if (contentTr != null)
-        {
-            for (int i = 0; i < SIZE; i++)
-                if (contentTr.GetChild(i).GetComponent<ScrollScript>() && curPos != pos[i] && targetPos == pos[i])
-                    contentTr.GetChild(i).GetChild(1).GetComponent<Scrollbar>().value = 1;
-        }
-        else
-            return;
     }
 
     public void OnBeginDrag(PointerEventData eventData) => curPos = SetPos();
@@ -77,22 +50,32 @@ public class NestedScrollManager : MonoBehaviour, IBeginDragHandler, IDragHandle
 
         if (curPos == targetPos)
         {
+            //<-으로 가려면 목표가 하나 감소
             if (eventData.delta.x > 18 && curPos - distance >= 0)
             {
-                --targetIndex;
                 targetPos = curPos - distance;
             }
 
+            //->으로 가려면 목표가 하나 증가
             else if (eventData.delta.x < -18 && curPos + distance <= 1.01f)
             {
-                ++targetIndex;
                 targetPos = curPos + distance;
             }
         }
-
-        VerticalScrollUp();
     }
 
+    float SetPos()
+    {
+        // 패널의 절반거리를 기준으로 가까운 위치를 반환해서 그 패널로 돌아감
+        for (int i = 0; i < SIZE; i++)
+            if (adScrollbar.value < pos[i] + distance * 0.5f && adScrollbar.value > pos[i] - distance * 0.5f)
+            {
+                return pos[i];
+            }
+        return 0;
+    }
+
+    //광고의 서클 이미지를 활성화패널에 맞게 이동시켜준다
     private void UpdateCircleContents()
     {
         if (circleContents.Length == 0)
@@ -102,16 +85,26 @@ public class NestedScrollManager : MonoBehaviour, IBeginDragHandler, IDragHandle
         {
             circleContents[i].GetComponent<Image>().color = Color.white;
 
-            if (scrollbar.value < pos[i] + distance * 0.5f && scrollbar.value > pos[i] - distance * 0.5f)
+            if (adScrollbar.value < pos[i] + distance * 0.5f && adScrollbar.value > pos[i] - distance * 0.5f)
             {
                 circleContents[i].GetComponent<Image>().color = Color.black;
             }
         }
     }
 
-    public void TabClick(int n)
+    private IEnumerator AutoScrollCoroutine()
     {
-        targetIndex = n;
-        targetPos = pos[n];
+        while (true)
+        {
+            //PASSTIME마다 다음 광고로 넘어간다.
+            yield return new WaitForSeconds(passTime);
+
+            if (!isDrag)
+            {
+                int currentIndex = Mathf.RoundToInt(adScrollbar.value / distance);
+                int nextIndex = (currentIndex + 1) % SIZE;
+                targetPos = pos[nextIndex];
+            }
+        }
     }
 }
