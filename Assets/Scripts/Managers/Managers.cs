@@ -10,10 +10,8 @@ public class Managers : MonoBehaviour
     public static Managers Instance { get { Init(); return instance; } }
 
     DataManager _data = new DataManager();
-    CSVReader _csv = new CSVReader();
 
     public static DataManager Data { get { return Instance._data; } }
-    public static CSVReader CSV { get { return Instance._csv; } }
 
     static void Init()
     {
@@ -29,18 +27,14 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(go);
             instance = go.GetComponent<Managers>();
         }
+
+        //모든 csv파일을 converting
+        
     }
 
     private void Awake()
     {
         Init();
-    }
-
-    //CSV
-    public List<Dictionary<string, object>> ReadCSV(string filePath, string fileName)
-    {
-        string fullPath = Path.Combine(filePath, fileName); // 파일 전체 경로 조합
-        return CSVReader.Read(fullPath); // CSVReader를 사용하여 파일 읽기 및 파싱
     }
 
 }

@@ -36,12 +36,12 @@ public class Map : MonoBehaviour
 
     //값이 변경되면 업데이트 하기 위한 최근값
     private string apiKeyLast;
-    private float latLast = -33.85660618894087f;
-    private float lonLast = 151.21500701957325f;
+    protected float latLast = -33.85660618894087f;
+    protected float lonLast = 151.21500701957325f;
     private int zoomLast = 12;
     private resolution mapResolutionLast = resolution.low;
     private type mapTypeLast = type.roadmap;
-    private bool updateMap = true;
+    protected bool updateMap = true;
 
     // Touch handling variables
     private bool isDragging = false;
@@ -49,7 +49,7 @@ public class Map : MonoBehaviour
     private Vector2 lastMousePosition;
     public float dragSpeed = 0.1f;
 
-    void Start()
+    protected void Start()
     {
         //맵 불러오기
         StartCoroutine(GetStaticMap());
@@ -91,7 +91,7 @@ public class Map : MonoBehaviour
 
 
     //구글API를 통해 구글맵을 가져오는 코루틴
-    IEnumerator GetStaticMap()
+    protected IEnumerator GetStaticMap()
     {
         url = "https://maps.googleapis.com/maps/api/staticmap?" +
             "&center=" + lat + "," + lon +
@@ -124,14 +124,14 @@ public class Map : MonoBehaviour
             mapTypeLast = mapType;
             updateMap = true;
 
-            Debug.Log("불러오기 성공" + query);
+            Debug.Log("GoogleMap 불러오기 성공" + query);
             
         }
         else
         {
             //오류가 있으면
 
-            Debug.Log("WWW ERROR: " + www.error);
+            Debug.Log("GoogleMap 불러오기 실패" + query);
         }
     }
 
