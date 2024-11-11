@@ -23,7 +23,7 @@ public class DropdownController : MonoBehaviour
         Init();
     }
 
-    private void Init()
+    public void Init()
     {
         var dropdownOptionsMapping = new Dictionary<TMP_Dropdown, string[]>
         {
@@ -37,6 +37,12 @@ public class DropdownController : MonoBehaviour
         foreach (var entry in dropdownOptionsMapping)
         {
             SetDropdownOptionsFromArray(entry.Key, entry.Value);
+            // 첫 번째 항목을 기본적으로 선택
+            if (entry.Value.Length > 0)
+            {
+                entry.Key.value = 0;
+                entry.Key.RefreshShownValue();
+            }
         }
     }
 

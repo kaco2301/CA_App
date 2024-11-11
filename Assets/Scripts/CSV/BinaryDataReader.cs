@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public class BinaryDataReader
 {
+
     public static List<string> GetValuesByHeader(string fileName, string header, string sector)
     {
         string binaryFilePath = Path.Combine(Application.persistentDataPath, $"{fileName}.bin");
@@ -44,6 +45,7 @@ public class BinaryDataReader
         }
     }
 
+    //위도 경도 찾기
     public static List<(string, string)> GetLatLon(string fileName, string conditionHeader, string conditionValue)
     {
         string binaryFilePath = Path.Combine(Application.persistentDataPath, $"{fileName}.bin");
